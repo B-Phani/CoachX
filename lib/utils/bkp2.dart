@@ -60,35 +60,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _DetailScreen extends StatelessWidget {
-      final String author;
-      final int launchYear;
-
-      _DetailScreen({required this.author,required this.launchYear});
-
-      @override
-      Widget build(BuildContext context) {
-        return Scaffold(
-            backgroundColor: Colors.deepOrange, 
-            body : Column( 
-              children: [ 
-              Padding(
-                padding:const EdgeInsets.all(20.0),
-                child :
-                Center(child : Text("The author of the selected book is $author"))  
-               ),
-               Padding(
-                padding:const EdgeInsets.all(20.0),
-                child :
-                Center(child : Text("This book was launched in $launchYear"))  
-               )
-              // Center(child : Text("This book was launched in $launchYear")),
-              ]
-            ));
-      }
-
-}
-
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
@@ -130,50 +101,25 @@ class _MyHomePageState extends State<MyHomePage> {
   });
 }
 
-  Widget  _detailCard(context, author, launchYear){
 
-            return Scaffold( 
-            body : Column( 
-              children: [ 
-              Center(child : Text("The author of the selected book is $author")),
-              Center(child : Text("This book was launched in $launchYear")),
-              ]
-            ));
+  Widget _dialogBuilder(BuildContext context, var _authorName, var _launchYear) {
+    var author = _authorName[0];
+    
+    return  
+        Scaffold(
+        body: Column(
+          children: [
+            Container(
+              child: Text("Author of the selected book is $author"),
+            ),
+            Container(
+              child: Text("This book was launched in $_launchYear"),
+            ),
+          ],
+        )
+      );
   }
 
-
-  // Widget _dialogBuilder(BuildContext context, var _authorName, var _launchYear) {
-  //   var author = _authorName[0];
-    
-  //   return  
-  //       Scaffold(
-  //       body: Column(
-  //         children: [
-  //         ],
-  //       )
-  //     );
-  // }
-
-  Widget _card(BuildContext context, index) {
-            final item = BookList[index];
-            const HoverColor = Colors.deepOrange;
-            return  GestureDetector(
-              onTap: () { 
-                      Navigator.push(context, 
-                      MaterialPageRoute(builder:  (context) => 
-                      _DetailScreen(author: _author[index][0], launchYear: _LaunchYear[index])));
-                      // _detailCard(context, _author[index], _LaunchYear[index]),
-                  // showDialog(context: context, 
-                  //           builder: (context) => _dialogBuilder(context, _author[index],_LaunchYear[index])),
-              }, 
-              child : Card(
-                child: ListTile(
-                hoverColor: HoverColor,
-                leading: Icon(Icons.book),
-                title: Text(item),
-                          ),
-              ),);
-          }
 
   @override
   Widget build(BuildContext context) {
@@ -198,9 +144,18 @@ class _MyHomePageState extends State<MyHomePage> {
         // final item = BookList[index];
         child: ListView.builder(
           itemCount: BookList.length,
-          itemBuilder: (context, index){
-            return _card(context, index);
-          }
+          itemBuilder: (context, index) {
+            final item = BookList[index];
+            const HoverColor = Colors.deepOrange;
+            return  GestureDetector(
+              onTap: () =>  showDialog(context: context, 
+                            builder: (context) => _dialogBuilder(context, _author[index],_LaunchYear[index])),
+              child : ListTile(
+              hoverColor: HoverColor,
+              leading: Icon(Icons.book),
+              title: Text(item),
+            ),);
+          },
         ),
       ),
       
@@ -212,3 +167,27 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
+// DefaultTextStyle.merge(
+//         style : const TextStyle(
+//           fontSize: 24,
+//           fontWeight: FontWeight.bold
+//         ),
+//         children: Center(
+//           child: Text("Author of the selected book is $_authorName[0]"),
+//           child: Text("This book was launched in $_LaunchYear:" )
+//           ))
+
+// Scaffold(    
+//                             body: DefaultTextStyle.merge(
+//                             style : const TextStyle(
+//                               fontSize: 24,
+//                               fontWeight: FontWeight.bold
+//                             ),
+//                               child: Text("Author of the selected book is $_author[0]"),
+//                               // child: Text("This book was launched in $_LaunchYear:" )
+//                               ))
+
+
