@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -69,44 +70,65 @@ class _DetailScreen extends StatelessWidget {
       @override
       Widget build(BuildContext context) {
         return Scaffold(
-            backgroundColor: Colors.deepOrange, 
-            body : Column( 
-              children: [ 
-              Padding(
-                padding:const EdgeInsets.all(20.0),
-                child :
-                Center(child : Text("The author of the selected book is $author"))  
-               ),
-               Padding(
-                padding:const EdgeInsets.all(20.0),
-                child :
-                Center(child : Text("This book was launched in $launchYear"))  
-               )
-              // Center(child : Text("This book was launched in $launchYear")),
-              ]
-            ));
+            backgroundColor: Colors.cyanAccent, 
+            body : Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.yellowAccent,
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(
+                    width: 5,
+                    color: Colors.deepOrangeAccent
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 15
+                    )
+                  ]
+                ),
+                height: 250,
+                width: 300,
+                child: Column( 
+                  children: [ 
+                  Padding(
+                    padding:const EdgeInsets.all(20.0),
+                    child :
+                    Center(child : Text("The author of the selected book : $author"))  
+                   ),
+                   Padding(
+                    padding:const EdgeInsets.all(20.0),
+                    child :
+                    Center(child : Text("This book was launched in $launchYear"))  
+                   ),
+                  // Center(child : Text("This book was launched in $launchYear")),
+                  ])
+                ),
+            ),
+            );
       }
 
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   final dio = Dio();
-  var BookList = [];
-  var _author = [];
-  var _LaunchYear = [];
+  var EachbookData=[];
+
+  void InitRefreshList(BookDataTemp)
+  {
+    Navigator.of(context).pop();
+    setState(() {
+    EachbookData = BookDataTemp['docs'];
+    });
+  }
+  
+  void DelItemInList(int DelIndex)
+  {  
+    setState(() {
+      EachbookData.removeAt(DelIndex);
+    });
+  }
+  
   void getHttp() async 
 {
   showDialog(context: context 
@@ -115,64 +137,49 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   );
 
-  final response = await dio.get('https://openlibrary.org/search.json?q=test');
-  final Map<String, dynamic> BookData = Map.from(response.data);
+  final response = await dio.get('https://openlibrary.org/search.json?q=novel');
+  Map<String, dynamic> BookData = Map.from(response.data);
   // List<dynamic> BookData = jsonDecode(response.data);
-  
-  Navigator.of(context).pop();
-  setState(() {
-  for (var each in BookData["docs"]) {
-    BookList.add(each["title"]);
-    _author.add(each["author_name"]);
-    _LaunchYear.add(each["first_publish_year"]);
-  }
-  print(BookList);
-  });
+  InitRefreshList(BookData);
 }
 
-  Widget  _detailCard(context, author, launchYear){
-
-            return Scaffold( 
-            body : Column( 
-              children: [ 
-              Center(child : Text("The author of the selected book is $author")),
-              Center(child : Text("This book was launched in $launchYear")),
-              ]
-            ));
-  }
-
-
-  // Widget _dialogBuilder(BuildContext context, var _authorName, var _launchYear) {
-  //   var author = _authorName[0];
-    
-  //   return  
-  //       Scaffold(
-  //       body: Column(
-  //         children: [
-  //         ],
-  //       )
-  //     );
-  // }
 
   Widget _card(BuildContext context, index) {
-            final item = BookList[index];
+            final item = EachbookData[index]['title'];
+            final imageCode = EachbookData[index]['cover_i'];
+            print(index);
             const HoverColor = Colors.deepOrange;
-            return  GestureDetector(
-              onTap: () { 
-                      Navigator.push(context, 
-                      MaterialPageRoute(builder:  (context) => 
-                      _DetailScreen(author: _author[index][0], launchYear: _LaunchYear[index])));
-                      // _detailCard(context, _author[index], _LaunchYear[index]),
-                  // showDialog(context: context, 
-                  //           builder: (context) => _dialogBuilder(context, _author[index],_LaunchYear[index])),
-              }, 
-              child : Card(
-                child: ListTile(
-                hoverColor: HoverColor,
-                leading: Icon(Icons.book),
-                title: Text(item),
-                          ),
-              ),);
+            return  Column(
+              children: [
+                GestureDetector(
+                  onTap: () { 
+                          Navigator.push(context, 
+                          MaterialPageRoute(builder:  (context) => 
+                          _DetailScreen(author: EachbookData[index]["author_name"][0], 
+                          launchYear: EachbookData[index]["first_publish_year"]
+                          )));
+                      }, 
+                  child : Card(                   
+                    shadowColor: Colors.orange,
+                    elevation: 10,
+                    child: ListTile(
+                    focusColor: Colors.black,
+                    leading: CircleAvatar(backgroundImage: NetworkImage("https://covers.openlibrary.org/b/id/${imageCode}-S.jpg"),),
+                          // Icon(ImageIcon(image)),
+                    title: Text(item),     
+                    trailing: ElevatedButton(
+                                style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(7),
+                                  backgroundColor: MaterialStateProperty.all(Color.fromARGB(160, 255, 0, 21))
+                                ),
+                                onPressed:() { 
+                                    DelItemInList(index);
+                                 },
+                              child: Text("Delete"),)
+                  )),     
+                  ),
+              ],
+            );
           }
 
   @override
@@ -197,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         // final item = BookList[index];
         child: ListView.builder(
-          itemCount: BookList.length,
+          itemCount: EachbookData.length,
           itemBuilder: (context, index){
             return _card(context, index);
           }
@@ -212,3 +219,16 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
+//  Widget  _detailCard(context, author, launchYear){
+
+//             return Scaffold( 
+//             body : Column( 
+//               children: [ 
+//               Center(child : Text("The author of the selected book is $author")),
+//               Center(child : Text("This book was launched in $launchYear")),
+//               ]
+//             ));
+//   }
