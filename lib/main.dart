@@ -165,6 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final dio = Dio();
   var EachbookData=[];
+  var img ;
 
   void InitRefreshList(BookDataTemp)
   {
@@ -199,11 +200,29 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _card(BuildContext context, index) {
             final item = EachbookData[index]['title'];
             final imageCode = EachbookData[index]['cover_i'];
-            // var imageCode = 0;
-            // if (EachbookData[index]['cover_i'])
-            // { 
-            //   final imageCode = EachbookData[index]['cover_i'];
+            final image1 = 
+              imageCode==null ? Image.network("https://covers.openlibrary.org/b/id/13265283-S.jpg") :
+               Image.network("https://covers.openlibrary.org/b/id/${imageCode}-S.jpg");
+            // final image1 = Image.network("https://covers.openlibrary.org/b/id/${imageCode}-S.jpg");
+            // final imageIP = image1 as ImageProvider;
+            final PHimage = AssetImage('assets/images/cocacola.png');
+            // final PHimageIP = AssetImage('assets/images/cocacola.png') as ImageProvider;
+            bool _loaded = false;
+            
+            // @override
+            // void initState() {
+            //   super.initState();
+            
+            // image1.image.resolve(ImageConfiguration()).addListener(
+            //   ImageStreamListener((ImageInfo image, bool synchronousCall) {
+            // // image1.image.resolve(ImageConfiguration()).addListener((i, b) {
+            //   if (mounted) {
+            //     setState(() => _loaded = true);
+            //   }
             // }
+            //   ));   
+            // }
+
             const HoverColor = Colors.deepOrange;
             return  Column(
               children: [
@@ -227,8 +246,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     elevation: 10,
                     child: ListTile(
                     focusColor: Colors.black,
-                    leading: CircleAvatar(backgroundImage: NetworkImage("https://covers.openlibrary.org/b/id/${imageCode}-S.jpg"),),
-                          // Icon(ImageIcon(image)),
+                    leading:  CircleAvatar(backgroundImage: image1.image
+                              ,),
+                    
+                    // CircleAvatar(backgroundImage: _loaded ? image1.image : PHimage as ImageProvider
+                    // FadeInImage.assetNetwork(placeholder: 'assets/images/cocacola.png', image: 'https://covers.openlibrary.org/b/id/${imageCode}-S.jpg'),
+                    // CircleAvatar(backgroundImage:
+                    // NetworkImage("https://covers.openlibrary.org/b/id/${imageCode}-S.jpg"),),
                     title: Text(item),     
                     trailing: ElevatedButton(
                                 style: ButtonStyle(
