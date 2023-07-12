@@ -1,5 +1,6 @@
-import 'dart:convert';
+import 'package:first_proj/widgets/BookCards.dart';
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
@@ -64,50 +65,101 @@ class MyHomePage extends StatefulWidget {
 class _DetailScreen extends StatelessWidget {
       final String author;
       final int launchYear;
+      final int imageCode;
+      final String place;
+      final String publisher;
+      final int ratingsNo;
+      final dynamic ratingsAvg;
+      final List language;
 
-      _DetailScreen({required this.author,required this.launchYear});
+      _DetailScreen({required this.author,required this.launchYear,
+                    required this.imageCode,required this.place,required this.publisher,
+                    required this.ratingsNo ,required this.ratingsAvg, required this.language});
 
       @override
       Widget build(BuildContext context) {
         return Scaffold(
             backgroundColor: Colors.cyanAccent, 
             body : Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.yellowAccent,
-                  borderRadius: BorderRadius.circular(11),
-                  border: Border.all(
-                    width: 5,
-                    color: Colors.deepOrangeAccent
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [                
+                  Container(
+                  decoration: BoxDecoration(
+                    color: Colors.yellowAccent,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      width: 5,
+                      color: Colors.deepOrangeAccent
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 15
+                      )
+                    ]
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 15
+                  height: 300,
+                  width: 500,
+                  child: Column( 
+                    children: [ 
+                    Padding(
+                      padding:const EdgeInsets.all(20.0),
+                      child :
+                      Center(child : Text("The author of the selected book : $author"))  
+                     ),
+                    Padding(
+                      padding:const EdgeInsets.all(10.0),
+                      child :
+                      Center(child : Text("This book was launched in $launchYear"))  
+                     ),
+                    Padding(
+                      padding:const EdgeInsets.all(10.0),
+                      child :
+                      Center(child : Text("This book was published at $place by the publisher $publisher"))  
+                     ),
+                    Padding(
+                      padding:const EdgeInsets.all(10.0),
+                      child :
+                      Center(
+                        child : Text("It has got $ratingsNo number of ratings and the average of all is $ratingsAvg"))  
+                     ),
+                    Padding(
+                      padding:const EdgeInsets.all(10.0),
+                      child :
+                      Center(
+                        child : Text("It is available in these languages : $language"))  
+                     ),
+                    ])
+                  ),
+                  Container(
+                  // decoration: 
+                  // BoxDecoration(
+                  //   color: Colors.yellowAccent,
+                  //   borderRadius: BorderRadius.circular(11),
+                  //   border: Border.all(
+                  //     width: 5,
+                  //     color: Colors.deepOrangeAccent
+                  //   ),
+                  //   boxShadow: [
+                  //     BoxShadow(
+                  //       blurRadius: 15
+                  //     )
+                  //   ]
+                  // ),
+                  height: 450,
+                  // width: 300,
+                  child: ClipRRect (
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network("https://covers.openlibrary.org/b/id/${imageCode}-L.jpg",
+                                          fit: BoxFit.fill,),
+                  ),
                     )
                   ]
-                ),
-                height: 250,
-                width: 300,
-                child: Column( 
-                  children: [ 
-                  Padding(
-                    padding:const EdgeInsets.all(20.0),
-                    child :
-                    Center(child : Text("The author of the selected book : $author"))  
-                   ),
-                   Padding(
-                    padding:const EdgeInsets.all(20.0),
-                    child :
-                    Center(child : Text("This book was launched in $launchYear"))  
-                   ),
-                  // Center(child : Text("This book was launched in $launchYear")),
-                  ])
-                ),
+              ),
+           
             ),
             );
-      }
-
-}
+      }}
 
 class _MyHomePageState extends State<MyHomePage> {
 
@@ -147,7 +199,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _card(BuildContext context, index) {
             final item = EachbookData[index]['title'];
             final imageCode = EachbookData[index]['cover_i'];
-            print(index);
+            // var imageCode = 0;
+            // if (EachbookData[index]['cover_i'])
+            // { 
+            //   final imageCode = EachbookData[index]['cover_i'];
+            // }
             const HoverColor = Colors.deepOrange;
             return  Column(
               children: [
@@ -155,8 +211,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   onTap: () { 
                           Navigator.push(context, 
                           MaterialPageRoute(builder:  (context) => 
-                          _DetailScreen(author: EachbookData[index]["author_name"][0], 
-                          launchYear: EachbookData[index]["first_publish_year"]
+                          _DetailScreen(
+                          author: EachbookData[index]["author_name"][0], 
+                          launchYear: EachbookData[index]["first_publish_year"],
+                          imageCode: imageCode,
+                          place: EachbookData[index]["publish_place"][0],
+                          publisher: EachbookData[index]["publisher"][0], 
+                          ratingsAvg: EachbookData[index]["ratings_average"], 
+                          ratingsNo: EachbookData[index]["ratings_count"],
+                          language: EachbookData[index]["language"],
                           )));
                       }, 
                   child : Card(                   
@@ -207,6 +270,14 @@ class _MyHomePageState extends State<MyHomePage> {
           itemCount: EachbookData.length,
           itemBuilder: (context, index){
             return _card(context, index);
+                    // BookCard(context, EachbookData[index]['title'], 
+                    //               EachbookData[index]['cover_i'], 
+                    //               EachbookData[index]["author_name"][0], 
+                    //               EachbookData[index]["first_publish_year"],
+                    //               EachbookData[index]["publish_place"],
+                    //               EachbookData[index]["ratings_count"],
+                    //               EachbookData[index]["ratings_average"],
+                    //               );
           }
         ),
       ),
