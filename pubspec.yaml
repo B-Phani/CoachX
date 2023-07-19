@@ -37,6 +37,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   dio: ^5.2.1
+  video_player: ^2.7.0
+  audioplayers: ^4.1.0
+  path_provider: ^2.0.15
+  # syncfusion_flutter_pdfviewer: ^22.1.39
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +68,11 @@ flutter:
   assets:
     - assets/images/
     - assets/images/cocacola.png
+    - assets/images/illustration1.png
+    - assets/videos/bee.mp4
+    - assets/audio/audio1.wav
+    - assets/audio/
+    - assets/one.pdf
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
